@@ -182,7 +182,7 @@ EOM
 
     # OpenRGB
     if ask_user "Install an RGB control app (OpenRGB)?"; then
-      flatpak install -y flathub org.openrgb.OpenRGB
+      sudo pacman -S --noconfirm --needed openrgb
     fi
 
      # mangojuice
@@ -265,7 +265,7 @@ EOF
       sudo sysctl -p
     fi
 
-    # NVIDIA drivers
+    # NVIDIA drivers (NOT NEEDED ON LINUX MINT)
     if ask_user "Install newest NVIDIA drivers ?"; then
     sudo apt install pkg-config libglvnd-dev dkms build-essential libegl-dev libegl1 libgl-dev libgl1 libgles-dev libgles1 libglvnd-core-dev libglx-dev libopengl-dev gcc make -y
     sudo apt remove --purge '^nvidia-.*'
