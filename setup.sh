@@ -12,7 +12,7 @@ detect_distro() {
         . /etc/os-release
         if [[ "$ID" == "arch" || "$ID" == "manjaro" || "$ID" == "endeavouros" ]]; then
             echo "arch"
-        elif [[ "$ID" == "ubuntu" || "$ID" == "debian" ]]; then
+        elif [[ "$ID" == "ubuntu" || "$ID" == "LinuxMint" ]]; then
             echo "ubuntu"
         else
             echo "unknown"
