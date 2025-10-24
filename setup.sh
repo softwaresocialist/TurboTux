@@ -12,13 +12,13 @@ detect_distro() {
         . /etc/os-release
         if [[ "$ID" == "arch" || "$ID" == "manjaro" || "$ID" == "endeavouros" ]]; then
             echo "arch"
-        elif [[ "$ID" == "ubuntu" || "$ID" == "LinuxMint" ]]; then
+        elif [[ "$ID" == "ubuntu" || "$ID" == "LinuxMint" || "$ID" == "zorin" ]]; then
             echo "ubuntu"
         else
-            echo "unknown"
+            echo "unsupported"
         fi
     else
-        echo "unknown"
+        echo "unsupported"
     fi
 }
 
@@ -57,7 +57,7 @@ cat << 'EOF'
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠆⣃⠀⠀⢀⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⢂⠑⣤⠁⢰⣤⠂⠒⡃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠘⡀⠀⠀⠀⠀⠀⠀⡎⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⢤
+⠀⠀⠀⠀⠀⠀⠀⠀⠘⡀⠀⠀⠀⠀⠀⠀⡎⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⡠⢼⠋⢫⣻⣉⠈⠉⠉⠉⠙⠫⢭⣒⣠⣀⠀⠀⠀⠀⠀⠀⠀⡠⣺⠶⠉⢘⠀⠀
 ⠀⠀⠀⣴⠋⠈⠀⠀⠀⣷⠞⡂⠀⢀⣠⣴⠶⢶⠫⠯⠛⠿⣦⣀⠀⠀⡴⡇⠊⠁⠀⠀⢸⠀⠀
 ⠠⣤⡭⠀⠀⢰⢋⢱⠀⠀⡹⢀⡾⠃⢀⣠⠴⠾⡆⠨⠀⠀⠈⢷⣽⡮⣆⠂⢀⡠⠔⠒⡺⠀⠀
@@ -134,7 +134,7 @@ if [[ "$DISTRO" == "arch" ]]; then
       cat /sys/kernel/mm/transparent_hugepage/defrag
 
       cat <<EOF | sudo tee -a /etc/sysctl.conf
-vm.swappiness=100
+vm.swappiness=10
 vm.vfs_cache_pressure=50
 vm.dirty_bytes=268435456
 vm.dirty_background_bytes=67108864
@@ -186,8 +186,8 @@ EOM
     fi
 
      # mangojuice
-    if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics (mangojuice)"; then
-      flatpak install -y flathub com.mango_juice.MangoJuice
+    if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics/Afterburner (mangojuice)"; then
+       paru -S --noconfirm --needed mangojuice
     fi
 
     # lact
@@ -195,9 +195,9 @@ EOM
       sudo pacman -S --noconfirm --needed lact
     fi
 
-    # protonplus
-    if ask_user "Install a App to manage custom Proton versions like Proton-GE (protonplus)"; then
-      flatpak install -y flathub com.vysp3r.ProtonPlus
+    # proton-ge
+    if ask_user "Install a superior custom proton version (proton-GE)"; then
+       paru -S --noconfirm --needed proton-ge-custom-bin
     fi
 
     # CachyOS repo
@@ -233,11 +233,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
 
     # Steam
     if ask_user "Install Steam?"; then
-      TMP_DEB="/tmp/steam_latest.deb"
-      echo "Downloading latest Steam .deb package..."
-      wget -O "$TMP_DEB" "https://cdn.fastly.steamstatic.com/client/installer/steam.deb"
-      sudo dpkg -i "$TMP_DEB" || sudo apt-get install -f -y
-      rm -f "$TMP_DEB"
+      sudo apt install -y steam
     fi
 
     # Heroic Games Launcher
@@ -265,8 +261,8 @@ EOF
       sudo sysctl -p
     fi
 
-    # NVIDIA drivers (NOT NEEDED ON LINUX MINT)
-    if ask_user "Install newest NVIDIA drivers ?"; then
+    # NVIDIA drivers 
+    if ask_user "Install newest NVIDIA drivers (UBUNTU ONLY)?"; then
     sudo apt install pkg-config libglvnd-dev dkms build-essential libegl-dev libegl1 libgl-dev libgl1 libgles-dev libgles1 libglvnd-core-dev libglx-dev libopengl-dev gcc make -y
     sudo apt remove --purge '^nvidia-.*'
     sudo apt autoremove -y
@@ -274,7 +270,7 @@ EOF
       ubuntu-drivers devices
       sudo ubuntu-drivers autoinstall
 sudo apt update
-
+  
     # OpenRGB (via Flatpak)
     if ask_user "Install an RGB control app (OpenRGB)?"; then
       flatpak install -y flathub org.openrgb.OpenRGB
@@ -282,7 +278,7 @@ sudo apt update
 
     # mangojuice
     if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics (mangojuice)?"; then
-      flatpak install flathub io.github.radiolamp.mangojuice
+      flatpak install -y flathub com.mango_juice.MangoJuice
     fi
 
     # lact
