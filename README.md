@@ -37,7 +37,9 @@ chmod +x setup.sh
 ## Supported Distros
 
 * Arch and most derivatives
-* Ubuntu and Linux Mint
+* Ubuntu
+* Linux Mint
+* ZorinOS
 
 ---
 
