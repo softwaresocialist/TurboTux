@@ -12,7 +12,7 @@ detect_distro() {
         . /etc/os-release
         if [[ "$ID" == "arch" || "$ID" == "manjaro" || "$ID" == "endeavouros" ]]; then
             echo "arch"
-        elif [[ "$ID" == "ubuntu" || "$ID" == "LinuxMint" || "$ID" == "zorin" ]]; then
+        elif [[ "$ID" == "ubuntu" || "$ID" == "linuxmint" || "$ID" == "zorin" ]]; then
             echo "ubuntu"
         else
             echo "unsupported"
@@ -263,13 +263,14 @@ EOF
 
     # NVIDIA drivers 
     if ask_user "Install newest NVIDIA drivers (UBUNTU ONLY)?"; then
-    sudo apt install pkg-config libglvnd-dev dkms build-essential libegl-dev libegl1 libgl-dev libgl1 libgles-dev libgles1 libglvnd-core-dev libglx-dev libopengl-dev gcc make -y
-    sudo apt remove --purge '^nvidia-.*'
-    sudo apt autoremove -y
+      sudo apt install pkg-config libglvnd-dev dkms build-essential libegl-dev libegl1 libgl-dev libgl1 libgles-dev libgles1 libglvnd-core-dev libglx-dev libopengl-dev gcc make -y
+      sudo apt remove --purge '^nvidia-.*'
+      sudo apt autoremove -y
       sudo add-apt-repository -y ppa:graphics-drivers/ppa
       ubuntu-drivers devices
       sudo ubuntu-drivers autoinstall
-sudo apt update
+      sudo apt update
+    fi
   
     # OpenRGB (via Flatpak)
     if ask_user "Install an RGB control app (OpenRGB)?"; then
