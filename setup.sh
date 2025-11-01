@@ -279,7 +279,7 @@ EOF
 
     # mangojuice
     if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics (mangojuice)?"; then
-      flatpak install -y flathub com.mango_juice.MangoJuice
+      flatpak install -y flathub io.github.radiolamp.mangojuice
     fi
 
     # lact
