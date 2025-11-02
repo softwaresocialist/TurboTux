@@ -9,14 +9,14 @@
 
 ## Features
 
-* GPU driver installation
+* GPU driver installation/update
 * Gaming Launcher setup (Steam etc.)
 * Performance optimizations (CachyOS tweaks,custom Kernel and optimized repos)
 * Gaming Dependencies
 
 ---
 
-## Installation
+## Setup
 
 **1. Clone the repository**
 
