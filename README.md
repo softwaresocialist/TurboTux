@@ -11,7 +11,7 @@
 
 * GPU driver installation
 * Gaming Launcher setup (Steam etc.)
-* Performance optimizations (cachyos tweaks,custom Kernel and optimized repos)
+* Performance optimizations (CachyOS tweaks,custom Kernel and optimized repos)
 * Gaming Dependencies
 
 ---

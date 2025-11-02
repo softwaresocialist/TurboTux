@@ -108,8 +108,8 @@ if [[ "$DISTRO" == "arch" ]]; then
       sudo pacman -S --noconfirm --needed steam
     fi
 
-    # Heroic
-    if ask_user "Install Heroic Games launcher from AUR (Epic Games/GOG Access?)"; then
+    # Heroic Games Launcher
+    if ask_user "Install Heroic Games launcher from AUR? (Epic Games/GOG access)"; then
       paru -S --noconfirm --needed heroic-games-launcher-bin
     fi
 
@@ -149,7 +149,7 @@ EOF
     fi
 
     # NVIDIA drivers
-    if ask_user "Install NVIDIA drivers (RTX 2000+)?"; then
+    if ask_user "Install NVIDIA drivers? (RTX 2000+)"; then
       sudo pacman -S --noconfirm --needed nvidia-open-dkms nvidia-utils nvidia-settings lib32-nvidia-utils
 
       cat <<EOM | sudo tee /etc/modprobe.d/nvidia.conf
@@ -186,22 +186,22 @@ EOM
     fi
 
      # mangojuice
-    if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics/Afterburner (mangojuice)"; then
+    if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics/Afterburner (mangojuice)?"; then
        paru -S --noconfirm --needed mangojuice
     fi
 
     # lact
-    if ask_user "Install a GPU management/overclocking app like afterburner (lact)"; then
+    if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
       sudo pacman -S --noconfirm --needed lact
     fi
 
     # proton-ge
-    if ask_user "Install a superior custom proton version (proton-GE)"; then
+    if ask_user "Install a superior custom proton version (proton-GE)?"; then
        paru -S --noconfirm --needed proton-ge-custom-bin
     fi
 
     # CachyOS repo
-    if ask_user "Install CachyOS repositories (precopiled and natively compiled packages)?"; then
+    if ask_user "Install CachyOS repositories (precompiled and natively compiled packages)?"; then
       curl -O https://mirror.cachyos.org/cachyos-repo.tar.xz
       tar xvf cachyos-repo.tar.xz && cd cachyos-repo
       sudo ./cachyos-repo.sh
@@ -209,7 +209,7 @@ EOM
     fi
 
     # CachyOS kernel
-    if ask_user "Compile/install CachyOS kernel (can be slow if you dont have CachyOS repo)?"; then
+    if ask_user "Compile/install CachyOS kernel? (can be slow if you don't have CachyOS repo)"; then
       sudo pacman -Syyuu --noconfirm
       paru -S --noconfirm --needed linux-cachyos linux-cachyos-headers
       sudo grub-mkconfig -o /boot/grub/grub.cfg
@@ -237,7 +237,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
     fi
 
     # Heroic Games Launcher
-    if ask_user "Install Heroic Games Launcher (Epic/GOG) via Flatpak?"; then
+    if ask_user "Install Heroic Games Launcher from Flatpak? (Epic Games/GOG access)"; then
       flatpak install -y flathub com.heroicgameslauncher.hgl
     fi
 
@@ -262,7 +262,7 @@ EOF
     fi
 
     # NVIDIA drivers 
-    if ask_user "Install newest NVIDIA drivers (UBUNTU ONLY)?"; then
+    if ask_user "Install newest NVIDIA drivers? (UBUNTU ONLY)"; then
       sudo apt install pkg-config libglvnd-dev dkms build-essential libegl-dev libegl1 libgl-dev libgl1 libgles-dev libgles1 libglvnd-core-dev libglx-dev libopengl-dev gcc make -y
       sudo apt remove --purge '^nvidia-.*'
       sudo apt autoremove -y
@@ -287,19 +287,18 @@ EOF
         flatpak install -y flathub io.github.ilya_zlobintsev.LACT
     fi
     # protonplus
-    if ask_user "Install a App to manage/install custom Proton versions like Proton-GE (protonplus)?"; then
+    if ask_user "Install an app to manage/install custom Proton versions like Proton-GE (protonplus)?"; then
         flatpak install -y flathub com.vysp3r.ProtonPlus
     fi
 
     # Updated mesa
-    if ask_user "Install updated mesa (AMD Drivers) ?"; then
+    if ask_user "Install updated mesa (AMD Drivers)?"; then
        sudo add-apt-repository ppa:kisak/kisak-mesa
-       sudo apt update
-       sudo apt upgrade      
+       sudo apt update && sudo apt upgrade -y    
     fi
 
     # Liquorix kernel
-    if ask_user "Install Liquorix kernel for better performance and responsiveness (Will break secure boot)?"; then
+    if ask_user "Install Liquorix kernel for better performance and responsiveness? (Will break secure boot)"; then
       sudo apt install -y software-properties-common
       sudo add-apt-repository ppa:damentz/liquorix -y
       sudo apt update
@@ -316,5 +315,5 @@ fi
 
 # Reboot
 if ask_user "Do you want to reboot to apply changes?"; then
-reboot
+sudo reboot
 fi
