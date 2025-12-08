@@ -21,8 +21,8 @@
 **1. Clone the repository**
 
 ```bash
-git clone https://github.com/softwaresocialist/fishscript.git
-cd fishscript
+git clone https://github.com/softwaresocialist/TurboTux.git
+cd TurboTux
 ```
 
 **2. Run the main setup script**
