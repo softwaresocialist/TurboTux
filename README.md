@@ -21,7 +21,7 @@
 **1. Clone the repository**
 
 ```bash
-git clone https://github.com/magikarq/fishscript.git
+git clone https://github.com/softwaresocialist/fishscript.git
 cd fishscript
 ```
 
