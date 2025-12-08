@@ -85,7 +85,7 @@ if [[ "$DISTRO" == "arch" ]]; then
         sudo pacman -Sy
       fi
 
-      sudo pacman -S --needed --noconfirm reflector wget gnupg curl git base-devel flatpak
+      sudo pacman -S --needed --noconfirm reflector wget gnupg curl git base-devel flatpak fuse2
       if ! command -v paru &> /dev/null; then
         cd /tmp
         git clone https://aur.archlinux.org/paru-bin.git
@@ -222,7 +222,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
     # Dependencies
     if ask_user "Install base dependencies?"; then
       sudo apt update && sudo apt upgrade -y
-      sudo apt install -y build-essential curl wget gnupg git software-properties-common flatpak
+      sudo apt install -y build-essential curl wget gnupg git software-properties-common flatpak libfuse2t64
       if ! flatpak remote-list | grep -q flathub; then
         sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
       fi
