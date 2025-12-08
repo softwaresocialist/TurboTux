@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# sudo/root check
+# sudo check
 if [ "$EUID" -eq 0 ]; then
-  echo "This script cant be run as root or with sudo. Exiting..."
+  echo "This script must be run with sudo. Exiting..."
   exit 1
 fi
 
