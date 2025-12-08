@@ -1,7 +1,7 @@
 
 ---
 
-# Linux Gaming Setup Script
+# TurboTux
 
  A Script to quickly setup your Distro for gaming
 
@@ -25,7 +25,7 @@ git clone https://github.com/softwaresocialist/TurboTux.git
 cd TurboTux
 ```
 
-**2. Run the main setup script**
+**2. Run the script**
 
 ```bash
 chmod +x setup.sh
