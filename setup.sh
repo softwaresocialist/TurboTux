@@ -10,7 +10,7 @@ fi
 detect_distro() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
-        if [[ "$ID" == "arch" || "$ID" == "manjaro" || "$ID" == "endeavouros" ]]; then
+        if [[ "$ID" == "arch" || "$ID" == "manjaro" || "$ID" == "endeavouros" || "$ID" == "archcraft" ]]; then
             echo "arch"
         elif [[ "$ID" == "ubuntu" || "$ID" == "linuxmint" || "$ID" == "zorin" ]]; then
             echo "ubuntu"
@@ -187,7 +187,7 @@ EOM
 
      # mangojuice
     if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics/Afterburner (mangojuice)?"; then
-       paru -S --noconfirm --needed mangojuice
+       paru -S --noconfirm --needed mangojuice-bin
     fi
 
     # lact
@@ -272,7 +272,7 @@ EOF
       sudo apt update
     fi
   
-    # OpenRGB (via Flatpak)
+    # OpenRGB
     if ask_user "Install an RGB control app (OpenRGB)?"; then
       flatpak install -y flathub org.openrgb.OpenRGB
     fi
