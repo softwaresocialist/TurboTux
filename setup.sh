@@ -158,34 +158,7 @@ fs.file-max=2097152
 EOF
       sudo sysctl -p
     fi
-
-    # NVIDIA drivers
-    if ask_user "Install NVIDIA drivers? (RTX 2000+)"; then
-      sudo pacman -S --noconfirm --needed nvidia-open-dkms nvidia-utils nvidia-settings lib32-nvidia-utils
-
-      cat <<EOM | sudo tee /etc/modprobe.d/nvidia.conf
-options nvidia NVreg_UsePageAttributeTable=1 \\
-    NVreg_InitializeSystemMemoryAllocations=0 \\
-    NVreg_DynamicPowerManagement=0x02 \\
-    NVreg_RegistryDwords=RMIntrLockingMode=1
-options nvidia_drm modeset=1
-EOM
-
-      echo -e "blacklist nouveau\noptions nouveau modeset=0" | sudo tee /etc/modprobe.d/blacklist-nouveau.conf
-
-      sudo mkinitcpio -P
-
-      sudo mkdir -p /etc/X11/xorg.conf.d
-      cat <<EOM | sudo tee /etc/X11/xorg.conf.d/20-nvidia.conf
-Section "Device"
-    Identifier "NVIDIA Card"
-    Driver "nvidia"
-EndSection
-EOM
-
-      sudo nvidia-smi -pm 1
-    fi
-
+    
     # pamac
     if ask_user "Install a appstore (pamac-aur)?"; then
       paru -S --noconfirm --needed pamac-aur
