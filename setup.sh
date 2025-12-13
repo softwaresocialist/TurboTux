@@ -211,6 +211,11 @@ EOM
        paru -S --noconfirm --needed proton-ge-custom-bin
     fi
 
+    # ntfs
+    if ask_user "Install Windows drive support (ntfs-3g)?"; then
+       sudo pacman -S --noconfirm --needed ntfs-3g
+    fi
+    
     # CachyOS repo
     if ask_user "Install CachyOS repositories (precompiled and natively compiled packages)?"; then
       curl -O https://mirror.cachyos.org/cachyos-repo.tar.xz
@@ -291,6 +296,7 @@ EOF
     # mangojuice
     if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics (mangojuice)?"; then
       flatpak install -y flathub io.github.radiolamp.mangojuice
+      sudo apt install -y mangohud
     fi
 
     # lact
