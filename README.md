@@ -39,6 +39,7 @@ chmod +x setup.sh
 * Ubuntu
 * Linux Mint
 * ZorinOS
+* Open Suse Tumbleweed
 
 ---
 
