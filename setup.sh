@@ -2,7 +2,7 @@
 
 # sudo check
 if [ "$EUID" -eq 0 ]; then
-  echo "This script must be run with sudo. Exiting..."
+  echo "This script must be run without sudo. Exiting..."
   exit 1
 fi
 
@@ -14,6 +14,8 @@ detect_distro() {
             echo "arch"
         elif [[ "$ID" == "ubuntu" || "$ID" == "linuxmint" || "$ID" == "zorin" ]]; then
             echo "ubuntu"
+        elif [[ "$ID" == "opensuse-tumbleweed" ]]; then
+            echo "opensuse"
         else
             echo "unsupported"
         fi
@@ -89,14 +91,14 @@ if [[ "$DISTRO" == "arch" ]]; then
     
     # Dependencies
     if ask_user "Install base dependencies and enable multilib repo?"; then
-      sudo pacman -Syyuu --noconfirm
+      sudo pacman -Sy --noconfirm
 
       if ! grep -q "^\[multilib\]" /etc/pacman.conf; then
         echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" | sudo tee -a /etc/pacman.conf
         sudo pacman -Sy
       fi
 
-      sudo pacman -S --needed --noconfirm reflector wget gnupg curl git base-devel flatpak fuse2
+      sudo pacman -S --needed --noconfirm curl git base-devel flatpak fuse2
       if ! command -v paru &> /dev/null; then
         cd /tmp
         git clone https://aur.archlinux.org/paru-bin.git
@@ -110,8 +112,9 @@ if [[ "$DISTRO" == "arch" ]]; then
 
     # Mirrors
     if ask_user "Set fastest mirrors?"; then
+      sudo pacman -S --needed --noconfirm reflector
       sudo reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
-      sudo pacman -Syy
+      sudo pacman -Sy
     fi
 
     # Steam
@@ -127,43 +130,15 @@ if [[ "$DISTRO" == "arch" ]]; then
     # System optimizations
     if ask_user "Apply general optimizations and setup gamemode?"; then
       sudo pacman -S --noconfirm --needed gamemode
-      systemctl --user enable gamemoded.service
-      paru -S --noconfirm --needed cachyos-ananicy-rules
-      sudo systemctl enable --now ananicy-cpp.service
-
-      echo -e "w! /sys/class/rtc/rtc0/max_user_freq - - - - 3072\nw! /proc/sys/dev/hpet/max-user-freq  - - - - 3072" | sudo tee /etc/tmpfiles.d/custom-rtc.conf
-      sudo systemd-tmpfiles --create /etc/tmpfiles.d/custom-rtc.conf
-      cat /sys/class/rtc/rtc0/max_user_freq
-      cat /proc/sys/dev/hpet/max-user-freq
-
-      echo -e "w! /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none - - - - 409" | sudo tee /etc/tmpfiles.d/custom-thp.conf
-      sudo systemd-tmpfiles --create /etc/tmpfiles.d/custom-thp.conf
-      cat /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none
-
-      echo -e "w! /sys/kernel/mm/transparent_hugepage/defrag - - - - defer+madvise" | sudo tee /etc/tmpfiles.d/custom-thp-defrag.conf
-      sudo systemd-tmpfiles --create /etc/tmpfiles.d/custom-thp-defrag.conf
-      cat /sys/kernel/mm/transparent_hugepage/defrag
 
       cat <<EOF | sudo tee -a /etc/sysctl.conf
 vm.swappiness=10
 vm.vfs_cache_pressure=50
-vm.dirty_bytes=268435456
-vm.dirty_background_bytes=67108864
-vm.dirty_writeback_centisecs=1500
 kernel.nmi_watchdog=0
-kernel.unprivileged_userns_clone=1
-kernel.kptr_restrict=2
-net.core.netdev_max_backlog=4096
-fs.file-max=2097152
 EOF
       sudo sysctl -p
     fi
     
-    # pamac
-    if ask_user "Install a appstore (pamac-aur)?"; then
-      paru -S --noconfirm --needed pamac-aur
-    fi
-
     # OpenRGB
     if ask_user "Install an RGB control app (OpenRGB)?"; then
       sudo pacman -S --noconfirm --needed openrgb
@@ -190,18 +165,18 @@ EOF
     fi
     
     # CachyOS repo
-    if ask_user "Install CachyOS repositories (precompiled and natively compiled packages)?"; then
+    if ask_user "Install CachyOS repositories and install cachyos optimizations?"; then
       curl -O https://mirror.cachyos.org/cachyos-repo.tar.xz
       tar xvf cachyos-repo.tar.xz && cd cachyos-repo
       sudo ./cachyos-repo.sh
-      sudo pacman -Syyuu --noconfirm
+      sudo pacman -Syu --noconfirm
+      cd
+      sudo pacman -S --noconfirm --needed cachyos-settings
     fi
 
     # CachyOS kernel
     if ask_user "Compile/install CachyOS kernel? (can be slow if you don't have CachyOS repo)"; then
-      sudo pacman -Syyuu --noconfirm
       paru -S --noconfirm --needed linux-cachyos linux-cachyos-headers
-      sudo grub-mkconfig -o /boot/grub/grub.cfg
     fi
 
 # Ubuntu section
@@ -211,10 +186,8 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
     # Dependencies
     if ask_user "Install base dependencies?"; then
       sudo apt update && sudo apt upgrade -y
-      sudo apt install -y build-essential curl wget gnupg git software-properties-common flatpak libfuse2t64
-      if ! flatpak remote-list | grep -q flathub; then
-        sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-      fi
+      sudo apt install -y flatpak libfuse2t64 software-properties-common
+      sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     else
       echo -e "\e[1;31mDependencies required. Exiting...\e[0m"
       exit 1
@@ -233,19 +206,12 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
     # System optimizations
     if ask_user "Apply general optimizations and install gamemode?"; then
       sudo apt install -y gamemode
-      systemctl --user enable gamemoded.service
 
-            cat <<EOF | sudo tee -a /etc/sysctl.conf
+      cat <<EOF | sudo tee -a /etc/sysctl.conf
 vm.swappiness=10
 vm.vfs_cache_pressure=50
-vm.dirty_bytes=268435456
-vm.dirty_background_bytes=67108864
-vm.dirty_writeback_centisecs=1500
 kernel.nmi_watchdog=0
-kernel.unprivileged_userns_clone=1
-kernel.kptr_restrict=2
-net.core.netdev_max_backlog=4096
-fs.file-max=2097152
+
 EOF
       sudo sysctl -p
     fi
@@ -289,7 +255,6 @@ EOF
 
     # Liquorix kernel
     if ask_user "Install Liquorix kernel for better performance and responsiveness? (Will break secure boot)"; then
-      sudo apt install -y software-properties-common
       sudo add-apt-repository ppa:damentz/liquorix -y
       sudo apt update
       sudo apt install -y linux-image-liquorix-amd64 linux-headers-liquorix-amd64
@@ -297,13 +262,66 @@ EOF
       sudo update-grub
     fi
 
+# OpenSUSE section
+elif [[ "$DISTRO" == "opensuse" ]]; then
+    echo "=== OpenSUSE Tumbleweed Setup ==="
+    
+    # Dependencies
+    if ask_user "Install base dependencies?"; then
+      sudo zypper refresh
+      sudo zypper install -y flatpak
+      sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    else
+      echo -e "\e[1;31mDependencies required. Exiting...\e[0m"
+      exit 1
+    fi
+
+    # Steam
+    if ask_user "Install Steam?"; then
+      sudo zypper install -y steam
+    fi
+
+    # Heroic
+    if ask_user "Install Heroic Games Launcher from Flatpak? (Epic Games/GOG access)"; then
+      sudo zypper install -y heroic-games-launcher
+    fi
+
+    # System optimizations
+    if ask_user "Apply general optimizations and install gamemode?"; then
+      sudo zypper install -y gamemode
+      sudo zypper addrepo https://download.opensuse.org/repositories/home:Herbster0815/openSUSE_Tumbleweed/home:Herbster0815.repo
+      sudo zypper refresh
+      sudo zypper install -y cachyos-settings
+    fi
+
+    # OpenRGB
+    if ask_user "Install an RGB control app (OpenRGB)?"; then
+      sudo zypper install -y OpenRGB
+    fi
+
+    # mangojuice
+    if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics/Afterburner (mangojuice)?"; then
+      flatpak install -y flathub io.github.radiolamp.mangojuice
+      sudo zypper install -y mangohud
+    fi
+
+    # lact
+    if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
+      flatpak install -y flathub io.github.ilya_zlobintsev.LACT
+    fi
+
+    # protonplus
+    if ask_user "Install an app to manage/install custom Proton versions like Proton-GE (protonplus)?"; then
+      sudo zypper install -y ProtonPlus
+    fi
+
 else
     echo "Unsupported distribution: $DISTRO"
-    echo "This script only supports Arch and Ubuntu. Exiting..."
+    echo "This script only supports Arch, Ubuntu, and OpenSUSE Tumbleweed. Exiting..."
     exit 1
 fi
 
 # Reboot
 if ask_user "Do you want to reboot to apply changes?"; then
-sudo reboot
+    sudo reboot
 fi
