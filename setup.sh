@@ -323,6 +323,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     
     # Dependencies
     if ask_user "Install base dependencies?"; then
+        sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
         sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
         sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
         sudo dnf update -y
@@ -346,7 +347,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     if ask_user "Apply general optimizations and install gamemode?"; then
       sudo dnf install -y gamemode gamemode-devel
       sudo dnf copr enable bieszczaders/kernel-cachyos-addons
-      sudo dnf install -y cachyos-settings
+      sudo dnf install -y cachyos-settings --allowerasing
     fi
 
     # NVIDIA drivers 
