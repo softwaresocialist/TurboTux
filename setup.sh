@@ -16,6 +16,8 @@ detect_distro() {
             echo "ubuntu"
         elif [[ "$ID" == "opensuse-tumbleweed" ]]; then
             echo "opensuse"
+        elif [[ "$ID" == "fedora" ]]; then
+            echo "fedora"
         else
             echo "unsupported"
         fi
@@ -315,9 +317,75 @@ elif [[ "$DISTRO" == "opensuse" ]]; then
       sudo zypper install -y ProtonPlus
     fi
 
+# Fedora section
+elif [[ "$DISTRO" == "fedora" ]]; then
+    echo "=== Fedora Setup ==="
+    
+    # Dependencies
+    if ask_user "Install base dependencies?"; then
+        sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+        sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+        sudo dnf update -y
+      fi
+    else
+      echo -e "\e[1;31mDependencies required. Exiting...\e[0m"
+      exit 1
+    fi
+
+    # Steam
+    if ask_user "Install Steam?"; then
+      sudo dnf install -y steam
+    fi
+
+    # Heroic Games Launcher
+    if ask_user "Install Heroic Games Launcher from Flatpak? (Epic Games/GOG access)"; then
+      flatpak install -y flathub com.heroicgameslauncher.hgl
+    fi
+
+    # System optimizations
+    if ask_user "Apply general optimizations and install gamemode?"; then
+      sudo dnf install -y gamemode gamemode-devel
+      sudo dnf copr enable bieszczaders/kernel-cachyos-addons
+      sudo dnf install -y cachyos-settings
+    fi
+
+    # NVIDIA drivers 
+    if ask_user "Install NVIDIA drivers?"; then
+      sudo dnf install -y akmod-nvidia xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-cuda-libs nvidia-settings
+      sudo dracut --force
+    fi
+  
+    # OpenRGB
+    if ask_user "Install an RGB control app (OpenRGB)?"; then
+      sudo dnf install -y openrgb
+    fi
+
+    # mangojuice
+    if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics (mangojuice)?"; then
+      flatpak install -y flathub io.github.radiolamp.mangojuice
+      sudo dnf install -y mangohud
+    fi
+
+    # lact
+    if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
+        flatpak install -y flathub io.github.ilya_zlobintsev.LACT
+    fi
+    # protonplus
+    if ask_user "Install an app to manage/install custom Proton versions like Proton-GE (protonplus)?"; then
+        flatpak install -y flathub com.vysp3r.ProtonPlus
+    fi
+
+    # CachyOS kernel
+    if ask_user "Install CachyOS kernel for better performance and responsiveness (NEEDS x86_64_v3) (WILL BREAK SECURE BOOT)?"; then
+     sudo setsebool -P domain_kernel_load_modules on
+     sudo dnf copr enable bieszczaders/kernel-cachyos
+     sudo dnf copr enable bieszczaders/kernel-cachyos-addons 
+     sudo dnf install -y kernel-cachyos kernel-cachyos-devel 
+    fi
+
 else
     echo "Unsupported distribution: $DISTRO"
-    echo "This script only supports Arch, Ubuntu, and OpenSUSE Tumbleweed. Exiting..."
+    echo "This script only supports Arch, Ubuntu, OpenSUSE Tumbleweed, and Fedora. Exiting..."
     exit 1
 fi
 
