@@ -10,7 +10,7 @@ fi
 detect_distro() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
-        if [[ "$ID" == "arch" || "$ID" == "manjaro" || "$ID" == "endeavouros" || "$ID" == "archcraft" ]]; then
+        if [[ "$ID" == "arch" || "$ID" == "manjaro" || "$ID" == "endeavouros" || "$ID" == "archcraft" || "$ID" == "omarchy" || "$ID" == "rebornos" ]]; then
             echo "arch"
         elif [[ "$ID" == "ubuntu" || "$ID" == "linuxmint" || "$ID" == "zorin" ]]; then
             echo "ubuntu"
