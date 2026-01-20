@@ -40,6 +40,7 @@ chmod +x setup.sh
 * Linux Mint
 * ZorinOS
 * Open Suse Tumbleweed
+* Fedora (experimental)
 
 ---
 
