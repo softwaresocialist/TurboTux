@@ -237,6 +237,7 @@ EOF
     # mangojuice
     if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics (mangojuice)?"; then
       flatpak install -y flathub io.github.radiolamp.mangojuice
+      flatpak install -y flathub org.freedesktop.Platform.VulkanLayer.MangoHud//25.08
       sudo apt install -y mangohud
     fi
 
@@ -304,6 +305,7 @@ elif [[ "$DISTRO" == "opensuse" ]]; then
     # mangojuice
     if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics/Afterburner (mangojuice)?"; then
       flatpak install -y flathub io.github.radiolamp.mangojuice
+      flatpak install -y flathub org.freedesktop.Platform.VulkanLayer.MangoHud//25.08
       sudo zypper install -y mangohud
     fi
 
@@ -364,6 +366,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     # mangojuice
     if ask_user "Install a peformance monitoring overlay like RivaTunerStatistics (mangojuice)?"; then
       flatpak install -y flathub io.github.radiolamp.mangojuice
+      flatpak install -y flathub org.freedesktop.Platform.VulkanLayer.MangoHud//25.08
       sudo dnf install -y mangohud
     fi
 
