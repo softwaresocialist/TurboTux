@@ -27,8 +27,8 @@ cd TurboTux
 **2. Run the script**
 
 ```bash
-chmod +x setup.sh
-./setup.sh
+chmod +x TurboTux.sh
+./TurboTux.sh
 ```
 
 ---
