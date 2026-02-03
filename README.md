@@ -40,7 +40,7 @@ chmod +x TurboTux.sh
 * Linux Mint
 * ZorinOS
 * Open Suse Tumbleweed
-* Fedora (experimental)
+* Fedora 
 
 ---
 
