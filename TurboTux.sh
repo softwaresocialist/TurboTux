@@ -10,7 +10,7 @@ fi
 detect_distro() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
-        if [[ "$ID" == "arch" || "$ID" == "manjaro" || "$ID" == "endeavouros" || "$ID" == "archcraft" || "$ID" == "omarchy" || "$ID" == "rebornos" ]]; then
+        if [[ "$ID" == "arch" || "$ID" == "endeavouros" || "$ID" == "archcraft" || "$ID" == "omarchy" || "$ID" == "rebornos" ]]; then
             echo "arch"
         elif [[ "$ID" == "ubuntu" || "$ID" == "linuxmint" || "$ID" == "zorin" ]]; then
             echo "ubuntu"
@@ -59,22 +59,17 @@ if [[ "$DISTRO" == "arch" ]]; then
       fi
 
       sudo pacman -S --needed --noconfirm curl git base-devel flatpak fuse2
+      curl -O https://mirror.cachyos.org/cachyos-repo.tar.xz
+      tar xvf cachyos-repo.tar.xz && cd cachyos-repo
+      sudo ./cachyos-repo.sh
+      sudo pacman -Syu --noconfirm
+      cd
       if ! command -v paru &> /dev/null; then
-        cd /tmp
-        git clone https://aur.archlinux.org/paru-bin.git
-        cd paru-bin
-        makepkg -si --noconfirm
+        sudo pacman -S --noconfirm --needed paru
       fi
     else
       echo -e "\e[1;31mDependencies not met. Exiting...\e[0m"
       exit 1
-    fi
-
-    # Mirrors
-    if ask_user "Set fastest mirrors?"; then
-      sudo pacman -S --needed --noconfirm reflector
-      sudo reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
-      sudo pacman -Sy
     fi
 
     # Steam
@@ -83,20 +78,13 @@ if [[ "$DISTRO" == "arch" ]]; then
     fi
 
     # Heroic Games Launcher
-    if ask_user "Install Heroic Games launcher from AUR? (Epic Games/GOG access)"; then
+    if ask_user "Install Heroic Games launcher (Epic Games/GOG access)?"; then
       paru -S --noconfirm --needed heroic-games-launcher-bin
     fi
 
     # System optimizations
     if ask_user "Apply general optimizations and setup gamemode?"; then
-      sudo pacman -S --noconfirm --needed gamemode
-
-      cat <<EOF | sudo tee -a /etc/sysctl.conf
-vm.swappiness=10
-vm.vfs_cache_pressure=50
-kernel.nmi_watchdog=0
-EOF
-      sudo sysctl -p
+      sudo pacman -S --noconfirm --needed gamemode cachyos-settings
     fi
     
     # OpenRGB
@@ -106,7 +94,8 @@ EOF
 
      # mangojuice
     if ask_user "Install a performance monitoring overlay like RivaTunerStatistics/Afterburner (mangojuice)?"; then
-       paru -S --noconfirm --needed mangojuice-bin
+       paru -S --noconfirm --needed mangojuice
+       sudo pacman -S --noconfirm --needed mangohud
     fi
 
     # lact
@@ -114,28 +103,23 @@ EOF
       sudo pacman -S --noconfirm --needed lact
     fi
 
-    # proton-ge
-    if ask_user "Install a superior custom proton version (proton-GE)?"; then
-       paru -S --noconfirm --needed proton-ge-custom-bin
+    # protontricks
+    if ask_user "Install an app to manage and tinker with Proton prefixes (protontricks)?"; then
+      sudo pacman -S --noconfirm --needed protontricks
+    fi
+
+    # protonplus
+    if ask_user "Install an app to manage/install custom Proton versions like Proton-GE (protonplus)?"; then
+        sudo pacman -S --noconfirm --needed protonplus
     fi
 
     # ntfs
     if ask_user "Install Windows drive support (ntfs-3g)?"; then
        sudo pacman -S --noconfirm --needed ntfs-3g
     fi
-    
-    # CachyOS repo
-    if ask_user "Install CachyOS repositories and install cachyos optimizations?"; then
-      curl -O https://mirror.cachyos.org/cachyos-repo.tar.xz
-      tar xvf cachyos-repo.tar.xz && cd cachyos-repo
-      sudo ./cachyos-repo.sh
-      sudo pacman -Syu --noconfirm
-      cd
-      sudo pacman -S --noconfirm --needed cachyos-settings
-    fi
 
     # CachyOS kernel
-    if ask_user "Compile/install CachyOS kernel? (can be slow if you don't have CachyOS repo)"; then
+    if ask_user "Install CachyOS kernel?"; then
       paru -S --noconfirm --needed linux-cachyos linux-cachyos-headers
     fi
 
@@ -164,27 +148,8 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
     fi
 
     # System optimizations
-    if ask_user "Apply general optimizations and install gamemode?"; then
+    if ask_user "Install gamemode?"; then
       sudo apt install -y gamemode
-
-      cat <<EOF | sudo tee -a /etc/sysctl.conf
-vm.swappiness=10
-vm.vfs_cache_pressure=50
-kernel.nmi_watchdog=0
-
-EOF
-      sudo sysctl -p
-    fi
-
-    # NVIDIA drivers 
-    if ask_user "Install newest NVIDIA drivers? (UBUNTU ONLY)"; then
-      sudo apt install pkg-config libglvnd-dev dkms build-essential libegl-dev libegl1 libgl-dev libgl1 libgles-dev libgles1 libglvnd-core-dev libglx-dev libopengl-dev gcc make -y
-      sudo apt remove --purge '^nvidia-.*'
-      sudo apt autoremove -y
-      sudo add-apt-repository -y ppa:graphics-drivers/ppa
-      ubuntu-drivers devices
-      sudo ubuntu-drivers autoinstall
-      sudo apt update
     fi
   
     # OpenRGB
@@ -203,19 +168,19 @@ EOF
     if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
         flatpak install -y flathub io.github.ilya_zlobintsev.LACT
     fi
+
+    # protontricks
+    if ask_user "Install an app to manage and tinker with Proton prefixes (protontricks)?"; then
+        flatpak install -y flathub com.github.Matoking.protontricks
+    fi
+
     # protonplus
     if ask_user "Install an app to manage/install custom Proton versions like Proton-GE (protonplus)?"; then
         flatpak install -y flathub com.vysp3r.ProtonPlus
     fi
 
-    # Updated mesa
-    if ask_user "Install updated mesa (AMD Drivers)?"; then
-       sudo add-apt-repository ppa:kisak/kisak-mesa
-       sudo apt update && sudo apt upgrade -y    
-    fi
-
     # Liquorix kernel
-    if ask_user "Install Liquorix kernel for better performance and responsiveness? (Will break secure boot)"; then
+    if ask_user "Install Liquorix kernel for better performance and responsiveness? (WILL BREAK SECURE BOOT)"; then
       sudo add-apt-repository ppa:damentz/liquorix -y
       sudo apt update
       sudo apt install -y linux-image-liquorix-amd64 linux-headers-liquorix-amd64
@@ -270,6 +235,11 @@ elif [[ "$DISTRO" == "opensuse" ]]; then
     # lact
     if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
       flatpak install -y flathub io.github.ilya_zlobintsev.LACT
+    fi
+
+    # protontricks
+    if ask_user "Install an app to manage and tinker with Proton prefixes (protontricks)?"; then
+      flatpak install -y flathub com.github.Matoking.protontricks
     fi
 
     # protonplus
@@ -331,6 +301,12 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
         flatpak install -y flathub io.github.ilya_zlobintsev.LACT
     fi
+
+    # protontricks
+    if ask_user "Install an app to manage and tinker with Proton prefixes (protontricks)?"; then
+        flatpak install -y flathub com.github.Matoking.protontricks
+    fi
+
     # protonplus
     if ask_user "Install an app to manage/install custom Proton versions like Proton-GE (protonplus)?"; then
         flatpak install -y flathub com.vysp3r.ProtonPlus
