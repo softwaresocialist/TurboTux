@@ -10,7 +10,7 @@
 ## Features
 
 * Gaming Launcher setup (Steam etc.)
-* Performance optimizations (CachyOS tweaks,custom Kernel and optimized repos)
+* Performance optimizations (CachyOS tweaks and custom Kernel)
 * Gaming Dependencies
 
 ---
