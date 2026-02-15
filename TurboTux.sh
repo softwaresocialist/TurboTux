@@ -50,25 +50,22 @@ ask_user() {
 if [[ "$DISTRO" == "arch" ]]; then
     echo "=== Arch Linux Setup ==="
     
-    # Dependencies
-    if ask_user "Install base dependencies and enable multilib repo?"; then
+    # Repositories
+    if ask_user "Enable necessary repositories?"; then
 
       if ! grep -q "^\[multilib\]" /etc/pacman.conf; then
         echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" | sudo tee -a /etc/pacman.conf
         sudo pacman -Syu --noconfirm
       fi
 
-      sudo pacman -S --needed --noconfirm curl git base-devel flatpak fuse2
+      sudo pacman -S --needed --noconfirm curl
       curl -O https://mirror.cachyos.org/cachyos-repo.tar.xz
       tar xvf cachyos-repo.tar.xz && cd cachyos-repo
       sudo ./cachyos-repo.sh
       sudo pacman -Syu --noconfirm
       cd
-      if ! command -v paru &> /dev/null; then
-        sudo pacman -S --noconfirm --needed paru
-      fi
     else
-      echo -e "\e[1;31mDependencies not met. Exiting...\e[0m"
+      echo -e "\e[1;31mRepositories required. Exiting...\e[0m"
       exit 1
     fi
 
@@ -79,7 +76,7 @@ if [[ "$DISTRO" == "arch" ]]; then
 
     # Heroic Games Launcher
     if ask_user "Install Heroic Games launcher (Epic Games/GOG access)?"; then
-      paru -S --noconfirm --needed heroic-games-launcher-bin
+      sudo pacman -S --noconfirm --needed heroic-games-launcher-bin
     fi
 
     # System optimizations
@@ -94,8 +91,7 @@ if [[ "$DISTRO" == "arch" ]]; then
 
      # mangojuice
     if ask_user "Install a performance monitoring overlay like RivaTunerStatistics/Afterburner (mangojuice)?"; then
-       paru -S --noconfirm --needed mangojuice
-       sudo pacman -S --noconfirm --needed mangohud
+       sudo pacman -S --noconfirm --needed mangohud mangojuice
     fi
 
     # lact
@@ -110,7 +106,7 @@ if [[ "$DISTRO" == "arch" ]]; then
 
     # protonplus
     if ask_user "Install an app to manage/install custom Proton versions like Proton-GE (protonplus)?"; then
-        sudo pacman -S --noconfirm --needed protonplus
+      sudo pacman -S --noconfirm --needed protonplus
     fi
 
     # ntfs
@@ -120,20 +116,20 @@ if [[ "$DISTRO" == "arch" ]]; then
 
     # CachyOS kernel
     if ask_user "Install CachyOS kernel?"; then
-      paru -S --noconfirm --needed linux-cachyos linux-cachyos-headers
+       sudo pacman -S --noconfirm --needed linux-cachyos linux-cachyos-headers
     fi
 
 # Ubuntu section
 elif [[ "$DISTRO" == "ubuntu" ]]; then
     echo "=== Ubuntu Setup ==="
     
-    # Dependencies
-    if ask_user "Install base dependencies?"; then
+    # Flatpak and Flathub repo
+    if ask_user "Install Flatpak and Flathub repo?"; then
       sudo apt update && sudo apt upgrade -y
-      sudo apt install -y flatpak libfuse2t64 software-properties-common
+      sudo apt install -y flatpak
       sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     else
-      echo -e "\e[1;31mDependencies required. Exiting...\e[0m"
+      echo -e "\e[1;31mFlatpak and Flathub are required. Exiting...\e[0m"
       exit 1
     fi
 
@@ -147,7 +143,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
       flatpak install -y flathub com.heroicgameslauncher.hgl
     fi
 
-    # System optimizations
+    # gamemode
     if ask_user "Install gamemode?"; then
       sudo apt install -y gamemode
     fi
@@ -193,12 +189,12 @@ elif [[ "$DISTRO" == "opensuse" ]]; then
     echo "=== OpenSUSE Tumbleweed Setup ==="
     
     # Dependencies
-    if ask_user "Install base dependencies?"; then
+    if ask_user "Install Flatpak and Flathub repo?"; then
       sudo zypper refresh
       sudo zypper install -y flatpak
-      sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+      flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
     else
-      echo -e "\e[1;31mDependencies required. Exiting...\e[0m"
+      echo -e "\e[1;31mRepositories required. Exiting...\e[0m"
       exit 1
     fi
 
@@ -227,19 +223,19 @@ elif [[ "$DISTRO" == "opensuse" ]]; then
 
     # mangojuice
     if ask_user "Install a performance monitoring overlay like RivaTunerStatistics/Afterburner (mangojuice)?"; then
-      flatpak install -y flathub io.github.radiolamp.mangojuice
-      flatpak install -y flathub org.freedesktop.Platform.VulkanLayer.MangoHud//25.08
+      flatpak install -y --user flathub io.github.radiolamp.mangojuice
+      flatpak install -y --user flathub org.freedesktop.Platform.VulkanLayer.MangoHud//25.08
       sudo zypper install -y mangohud
     fi
 
     # lact
     if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
-      flatpak install -y flathub io.github.ilya_zlobintsev.LACT
+      flatpak install -y --user flathub io.github.ilya_zlobintsev.LACT
     fi
 
     # protontricks
     if ask_user "Install an app to manage and tinker with Proton prefixes (protontricks)?"; then
-      flatpak install -y flathub com.github.Matoking.protontricks
+      flatpak install -y --user flathub com.github.Matoking.protontricks
     fi
 
     # protonplus
@@ -252,13 +248,13 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     echo "=== Fedora Setup ==="
     
     # Dependencies
-    if ask_user "Install base dependencies?"; then
+    if ask_user "Enable necessary repositories?"; then
         sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
         sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
         sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
         sudo dnf update -y
     else
-      echo -e "\e[1;31mDependencies required. Exiting...\e[0m"
+      echo -e "\e[1;31mRepositories required. Exiting...\e[0m"
       exit 1
     fi
 
@@ -279,12 +275,6 @@ elif [[ "$DISTRO" == "fedora" ]]; then
       sudo dnf install -y cachyos-settings --allowerasing
     fi
 
-    # NVIDIA drivers 
-    if ask_user "Install NVIDIA drivers?"; then
-      sudo dnf install -y akmod-nvidia xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-cuda-libs nvidia-settings
-      sudo dracut --force
-    fi
-  
     # OpenRGB
     if ask_user "Install an RGB control app (OpenRGB)?"; then
       sudo dnf install -y openrgb
