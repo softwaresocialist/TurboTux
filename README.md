@@ -35,7 +35,7 @@ chmod +x TurboTux.sh
 
 ## Supported Distros
 
-* Arch and most derivatives
+* Arch and most derivatives(NO MANJARO SUPPORT)
 * Ubuntu
 * Linux Mint
 * ZorinOS
