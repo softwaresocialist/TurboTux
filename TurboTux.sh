@@ -180,10 +180,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
 
     # Liquorix kernel
     if ask_user "Install Liquorix kernel for better performance and responsiveness? (WILL BREAK SECURE BOOT)"; then
-      sudo add-apt-repository ppa:damentz/liquorix -y
-      sudo apt update
-      sudo apt install -y linux-image-liquorix-amd64 linux-headers-liquorix-amd64
-      sudo update-grub
+      curl -s 'https://liquorix.net/install-liquorix.sh' | sudo bash
     fi
 
 # OpenSUSE section
