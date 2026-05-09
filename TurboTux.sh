@@ -112,11 +112,6 @@ if [[ "$DISTRO" == "arch" ]]; then
       sudo pacman -S --noconfirm --needed protonplus
     fi
 
-    # ntfs
-    if ask_user "Install Windows drive support (ntfs-3g)?"; then
-       sudo pacman -S --noconfirm --needed ntfs-3g
-    fi
-
     # CachyOS kernel
     if ask_user "Install CachyOS kernel?"; then
        sudo pacman -S --noconfirm --needed linux-cachyos linux-cachyos-headers
