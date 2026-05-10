@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# Gaming environment setup script for Arch, Ubuntu, openSUSE Tumbleweed, and Fedora.
-# Removed duplicate code – single clean version.
-
 # sudo check
 if [ "$EUID" -eq 0 ]; then
   echo "This script must be run without sudo. Exiting..."
