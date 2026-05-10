@@ -36,7 +36,7 @@ chmod +x TurboTux.sh
 ## Supported Distros
 
 * Arch and most derivatives (NO MANJARO SUPPORT)
-* Ubuntu
+* Ubuntu and most popular flavors
 * Linux Mint
 * ZorinOS
 * Open Suse Tumbleweed
