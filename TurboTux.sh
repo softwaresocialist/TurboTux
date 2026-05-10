@@ -15,7 +15,7 @@ detect_distro() {
         . /etc/os-release
         if [[ "$ID" == "arch" || "$ID" == "endeavouros" || "$ID" == "archcraft" || "$ID" == "omarchy" || "$ID" == "rebornos" ]]; then
             echo "arch"
-        elif [[ "$ID" == "ubuntu" || "$ID" == "linuxmint" || "$ID" == "zorin" ]]; then
+        elif [[ "$ID" == "ubuntu" || "$ID" == "linuxmint" || "$ID" == "zorin" || "$ID" == "kubuntu" || "$ID" == "lubuntu" || "$ID" == "xubuntu" ]]; then
             echo "ubuntu"
         elif [[ "$ID" == "opensuse-tumbleweed" ]]; then
             echo "opensuse"
@@ -98,7 +98,7 @@ if [[ "$DISTRO" == "arch" ]]; then
     fi
 
     # lact
-    if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
+    if ask_user "Install a GPU management/overclocking app like afterburner (LACT)?"; then
       sudo pacman -S --noconfirm --needed lact
     fi
 
@@ -159,7 +159,7 @@ elif [[ "$DISTRO" == "ubuntu" ]]; then
     fi
 
     # lact
-    if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
+    if ask_user "Install a GPU management/overclocking app like afterburner (LACT)?"; then
         flatpak install -y flathub io.github.ilya_zlobintsev.LACT
     fi
 
@@ -223,7 +223,7 @@ elif [[ "$DISTRO" == "opensuse" ]]; then
     fi
 
     # lact
-    if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
+    if ask_user "Install a GPU management/overclocking app like afterburner (LACT)?"; then
       flatpak install -y --user flathub io.github.ilya_zlobintsev.LACT
     fi
 
@@ -291,7 +291,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     fi
 
     # lact
-    if ask_user "Install a GPU management/overclocking app like afterburner (lact)?"; then
+    if ask_user "Install a GPU management/overclocking app like afterburner (LACT)?"; then
         flatpak install -y flathub io.github.ilya_zlobintsev.LACT
     fi
 
@@ -306,7 +306,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     fi
 
     # CachyOS kernel
-    if ask_user "Install CachyOS kernel for better performance and responsiveness (NEEDS x86_64_v3) (WILL BREAK SECURE BOOT)?"; then
+    if ask_user "Install CachyOS kernel for better performance and responsiveness (NEEDS at least x86_64_v3) (WILL BREAK SECURE BOOT)?"; then
      sudo setsebool -P domain_kernel_load_modules on
      sudo dnf copr enable bieszczaders/kernel-cachyos
      sudo dnf copr enable bieszczaders/kernel-cachyos-addons
