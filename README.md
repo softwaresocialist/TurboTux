@@ -9,7 +9,7 @@
 
 ## Features
 
-* Gaming Launcher setup (Steam etc.)
+* Gaming Launchers and utilities setup (Steam, LACT, Heroic etc.)
 * Performance optimizations (CachyOS tweaks and custom Kernel)
 * Gaming Dependencies
 
