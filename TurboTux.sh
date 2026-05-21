@@ -244,6 +244,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
         sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
         sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
         sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+        sudo dnf install --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
         sudo dnf update -y
     else
       echo -e "\e[1;31mUpdates and Repositories/Flatpak are required. Exiting...\e[0m"
@@ -256,8 +257,8 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     fi
 
     # Heroic Games Launcher
-    if ask_user "Install Heroic Games Launcher from Flatpak? (Epic Games/GOG access)"; then
-      flatpak install -y flathub com.heroicgameslauncher.hgl
+    if ask_user "Install Heroic Games Launcher? (Epic Games/GOG access)"; then
+      sudo dnf install heroic-games-launcher -y
     fi
 
     # System optimizations
@@ -294,7 +295,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
 
     # protontricks
     if ask_user "Install an app to manage and tinker with Proton prefixes (protontricks)?"; then
-        flatpak install -y flathub com.github.Matoking.protontricks
+        sudo dnf install protontricks -y
     fi
 
     # protonplus
