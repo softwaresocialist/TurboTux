@@ -262,10 +262,12 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     fi
 
     # System optimizations
-    if ask_user "Apply general optimizations and install gamemode?"; then
-      sudo dnf install -y gamemode gamemode-devel
+    if ask_user "Apply general optimizations? (Cachyos settings & ananicy-cpp)"; then
       sudo dnf copr enable bieszczaders/kernel-cachyos-addons
       sudo dnf install -y cachyos-settings --allowerasing
+      sudo dracut -f
+      sudo dnf install -y ananicy-cpp
+      sudo systemctl enable --now ananicy-cpp
     fi
     # Multimedia
     if ask_user "Setup Multimedia and Codecs?"; then
