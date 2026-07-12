@@ -80,8 +80,9 @@ if [[ "$DISTRO" == "arch" ]]; then
     fi
 
     # System optimizations
-    if ask_user "Apply general optimizations and setup gamemode?"; then
-      sudo pacman -S --noconfirm --needed gamemode lib32-gamemode cachyos-settings
+    if ask_user "Apply general optimizations and install gamemode? (Cachyos settings & ananicy-cpp)?"; then
+      sudo pacman -S --noconfirm --needed gamemode lib32-gamemode cachyos-settings ananicy-cpp cachyos-ananicy-rules
+      sudo systemctl enable --now ananicy-cpp
     fi
 
     # OpenRGB
@@ -189,6 +190,16 @@ elif [[ "$DISTRO" == "opensuse" ]]; then
       exit 1
     fi
 
+     # Disable SELinux
+    if ask_user "Disable SELinux? (Security System that sometimes interferes with games an tweaks)"; then
+        if [ -f /etc/selinux/config ]; then
+            sudo setenforce 0 2>/dev/null || true
+            sudo sed -i 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config
+        else
+            echo "SELinux configuration file not found. SELinux may not be installed."
+        fi
+    fi
+
     # Steam
     if ask_user "Install Steam?"; then
       sudo zypper install -y steam
@@ -240,6 +251,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
 
     # Repos
     if ask_user "Update System and setup necessary Repositories/Flatpak?"; then
+        sudo dnf update -y
         sudo dnf install -y flatpak
         sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
         sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
@@ -251,6 +263,16 @@ elif [[ "$DISTRO" == "fedora" ]]; then
       exit 1
     fi
 
+     # Disable SELinux
+    if ask_user "Disable SELinux? (Security System that sometimes interferes with games an tweaks)"; then
+        if [ -f /etc/selinux/config ]; then
+            sudo setenforce 0 2>/dev/null || true
+            sudo sed -i 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config
+        else
+            echo "SELinux configuration file not found. SELinux may not be installed."
+        fi
+    fi
+
     # Steam
     if ask_user "Install Steam?"; then
       sudo dnf install -y steam
@@ -258,7 +280,13 @@ elif [[ "$DISTRO" == "fedora" ]]; then
 
     # Heroic Games Launcher
     if ask_user "Install Heroic Games Launcher? (Epic Games/GOG access)"; then
-      sudo dnf install heroic-games-launcher -y
+      sudo dnf install -y heroic-games-launcher
+    fi
+
+    # terra-mesa
+    if ask_user "Install patched and potentially newer mesa? (Intel/AMD Graphics Driver)"; then
+      sudo dnf install -y terra-release-mesa
+      sudo dnf update -y
     fi
 
     # System optimizations
@@ -269,6 +297,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
       sudo dnf install -y ananicy-cpp
       sudo systemctl enable --now ananicy-cpp
     fi
+
     # Multimedia
     if ask_user "Setup Multimedia and Codecs?"; then
       sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing
@@ -279,7 +308,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     fi
 
     # OpenRGB
-    if ask_user "Install an RGB control app (OpenRGB)?"; then
+    if ask_user "Install a RGB control app (OpenRGB)?"; then
       sudo dnf install -y openrgb
     fi
 
@@ -297,7 +326,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
 
     # protontricks
     if ask_user "Install an app to manage and tinker with Proton prefixes (protontricks)?"; then
-        sudo dnf install protontricks -y
+        sudo dnf install -y protontricks
     fi
 
     # protonplus
@@ -314,7 +343,8 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     fi
 
 else
-    echo "This script only supports Arch, Ubuntu, OpenSUSE Tumbleweed, and Fedora. Exiting..."
+    echo "This script only supports Arch, Ubuntu, OpenSUSE Tumbleweed, and Fedora (and derivatives).
+    Exiting..."
     exit 1
 fi
 
