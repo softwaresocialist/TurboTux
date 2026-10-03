@@ -264,7 +264,7 @@ elif [[ "$DISTRO" == "fedora" ]]; then
     fi
 
      # Disable SELinux
-    if ask_user "Disable SELinux? (Security System that sometimes interferes with games an tweaks)"; then
+    if ask_user "Disable SELinux? (Security System that sometimes interferes with games and tweaks)"; then
         if [ -f /etc/selinux/config ]; then
             sudo setenforce 0 2>/dev/null || true
             sudo sed -i 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config
